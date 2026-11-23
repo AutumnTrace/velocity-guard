@@ -41,6 +41,14 @@ jobs:
           --collect "XPlat Code Coverage"
           --results-directory TestResults/unit
 
+      - name: Integration tests (Testcontainers, Redis)
+        run: >-
+          dotnet test --no-build -c Release
+          --filter "Category=Integration"
+          --logger "trx;LogFileName=integration.trx"
+          --collect "XPlat Code Coverage"
+          --results-directory TestResults/integration
+
       - name: Coverage summary
         if: always()
         run: |
@@ -69,7 +77,9 @@ jobs:
         with:
           context: .
           load: true
-          tags: velocity-guard:ci
+          tags: |
+            velocity-guard:ci
+            velocity-guard:local
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -87,3 +97,27 @@ jobs:
       - name: Container logs
         if: always()
         run: docker logs vg || true
+
+      - name: Compose stack on Redis
+        run: |
+          docker rm -f vg
+          docker compose config --quiet
+          docker compose up -d --no-build
+          for i in $(seq 1 60); do curl -sf http://localhost:8080/health/ready > ready.json && break; sleep 1; done
+          cat ready.json
+          grep -q '"name":"redis","status":"Healthy"' ready.json
+          # Four attempts from one device inside a minute: the fourth trips the card-testing rule,
+          # which proves the windows live in Redis.
+          for i in 1 2 3 4; do
+            curl -sf -X POST http://localhost:8080/v1/assessments \
+              -H "Content-Type: application/json" \
+              -d "{\"playerId\":\"p-compose-$i\",\"amount\":10.00,\"currency\":\"EUR\",\"method\":\"card\",\"ip\":\"203.0.113.20\",\"ipCountry\":\"DE\",\"card\":{\"binCountry\":\"DE\",\"fingerprint\":\"fp_compose_0$i\"},\"deviceId\":\"dev-compose\",\"accountAgeDays\":200}" \
+              > "attempt-$i.json"
+          done
+          cat attempt-4.json
+          grep -q '"decision":"review"' attempt-4.json
+          docker compose exec -T redis redis-cli --scan --pattern 'vg:*' | sort | head -20
+
+      - name: Compose logs
+        if: always()
+        run: docker compose logs --no-color api || true

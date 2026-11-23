@@ -32,7 +32,7 @@ public static class Observability
                 ServiceName,
                 serviceVersion: typeof(Observability).Assembly.GetName().Version?.ToString(3)))
             .WithMetrics(metrics => metrics
-                .AddMeter(RiskMetrics.MeterName)
+                .AddMeter(RiskMetrics.MeterName, "Polly")
                 .AddAspNetCoreInstrumentation()
                 .AddRuntimeInstrumentation())
             .WithTracing(tracing => tracing

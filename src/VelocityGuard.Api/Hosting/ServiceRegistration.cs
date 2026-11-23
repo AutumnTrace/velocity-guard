@@ -4,6 +4,7 @@ using VelocityGuard.Core.Diagnostics;
 using VelocityGuard.Core.Rules;
 using VelocityGuard.Core.Signals;
 using VelocityGuard.Core.Velocity;
+using VelocityGuard.Redis;
 
 namespace VelocityGuard.Api.Hosting;
 
@@ -70,6 +71,7 @@ public static class ServiceRegistration
         services.AddSingleton<AssessmentService>();
         services.AddSingleton<OutcomeService>();
         services.AddHostedService<ListSeeder>();
+        services.AddExceptionHandler<DependencyUnavailableHandler>();
 
         var storage = configuration.GetSection(StorageOptions.SectionName).Get<StorageOptions>() ?? new StorageOptions();
         switch (storage.Provider)
@@ -81,8 +83,12 @@ public static class ServiceRegistration
                 services.AddSingleton<IRiskDataRepository, InMemoryRiskDataRepository>();
                 break;
 
+            case StorageProvider.Redis:
+                services.AddRedisStorage(configuration, storage.JournalRetention);
+                break;
+
             default:
-                throw new InvalidOperationException($"Storage provider '{storage.Provider}' is not available in this build.");
+                throw new InvalidOperationException($"Unknown storage provider '{storage.Provider}'.");
         }
 
         return services;

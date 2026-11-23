@@ -2,8 +2,10 @@
   <Folder Name="/src/">
     <Project Path="src/VelocityGuard.Api/VelocityGuard.Api.csproj" />
     <Project Path="src/VelocityGuard.Core/VelocityGuard.Core.csproj" />
+    <Project Path="src/VelocityGuard.Redis/VelocityGuard.Redis.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/VelocityGuard.IntegrationTests/VelocityGuard.IntegrationTests.csproj" />
     <Project Path="tests/VelocityGuard.Tests/VelocityGuard.Tests.csproj" />
   </Folder>
 </Solution>

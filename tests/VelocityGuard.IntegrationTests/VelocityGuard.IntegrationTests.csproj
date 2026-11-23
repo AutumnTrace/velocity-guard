@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Needs Docker (Testcontainers). Every test here carries [Trait("Category", "Integration")]. -->
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.Redis" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.v3.mtp-off" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The same store contract the in-memory store passes, now against real Redis. -->
+    <Compile Include="..\VelocityGuard.Tests\Velocity\VelocityStoreContract.cs" Link="Shared\VelocityStoreContract.cs" />
+    <Compile Include="..\VelocityGuard.Tests\TestData.cs" Link="Shared\TestData.cs" />
+    <Compile Include="..\VelocityGuard.Tests\TestServices.cs" Link="Shared\TestServices.cs" />
+    <Compile Include="..\VelocityGuard.Tests\Api\ApiFactory.cs" Link="Shared\ApiFactory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\VelocityGuard.Api\VelocityGuard.Api.csproj" />
+  </ItemGroup>
+
+</Project>
