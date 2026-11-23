@@ -1,0 +1,135 @@
+{
+  "Risk": {
+    "Decision": {
+      "ReviewAt": 40,
+      "DeclineAt": 80
+    },
+    "Rules": [
+      {
+        "Id": "blocked-device",
+        "Type": "Blocklist",
+        "List": "blocked-devices",
+        "Dimension": "Device",
+        "Score": 100,
+        "Action": "Decline",
+        "Description": "Device linked to confirmed fraud or an earlier chargeback"
+      },
+      {
+        "Id": "blocked-card",
+        "Type": "Blocklist",
+        "List": "blocked-cards",
+        "Dimension": "Card",
+        "Score": 100,
+        "Action": "Decline",
+        "Description": "Card token linked to an earlier chargeback"
+      },
+      {
+        "Id": "blocked-ip",
+        "Type": "Blocklist",
+        "List": "blocked-ips",
+        "Dimension": "Ip",
+        "Score": 60,
+        "Description": "IP on the deny list (abuse reports, known proxy exits)"
+      },
+      {
+        "Id": "trusted-player",
+        "Type": "Allowlist",
+        "List": "trusted-players",
+        "Dimension": "Player",
+        "Score": -30,
+        "Description": "Long-standing, verified player"
+      },
+      {
+        "Id": "device-burst-1m",
+        "Type": "VelocityCount",
+        "Dimension": "Device",
+        "Window": "00:01:00",
+        "MaxCount": 3,
+        "Score": 50,
+        "Description": "Burst of attempts from one device: the classic card-testing pattern"
+      },
+      {
+        "Id": "player-attempts-10m",
+        "Type": "VelocityCount",
+        "Dimension": "Player",
+        "Window": "00:10:00",
+        "MaxCount": 5,
+        "Score": 35,
+        "Description": "Many deposit attempts by one player in a short time"
+      },
+      {
+        "Id": "card-attempts-1h",
+        "Type": "VelocityCount",
+        "Dimension": "Card",
+        "Window": "01:00:00",
+        "MaxCount": 6,
+        "Score": 40,
+        "Description": "One card retried many times"
+      },
+      {
+        "Id": "ip-attempts-1h",
+        "Type": "VelocityCount",
+        "Dimension": "Ip",
+        "Window": "01:00:00",
+        "MaxCount": 30,
+        "Score": 30,
+        "Description": "Many attempts from one IP (or one IPv6 /64)"
+      },
+      {
+        "Id": "player-deposits-24h",
+        "Type": "VelocitySum",
+        "Dimension": "Player",
+        "Window": "1.00:00:00",
+        "Limits": { "EUR": 2000, "GBP": 1700, "USD": 2200, "SEK": 22000 },
+        "Score": 40,
+        "Description": "Deposits by one player in 24 hours above the daily limit"
+      },
+      {
+        "Id": "card-deposits-7d",
+        "Type": "VelocitySum",
+        "Dimension": "Card",
+        "Window": "7.00:00:00",
+        "Limits": { "EUR": 5000, "GBP": 4300, "USD": 5500 },
+        "Score": 30,
+        "Mode": "Shadow",
+        "Description": "Weekly volume on one card; in shadow mode while its threshold is tuned"
+      },
+      {
+        "Id": "large-amount",
+        "Type": "AmountThreshold",
+        "Limits": { "EUR": 5000, "GBP": 4300, "USD": 5500, "SEK": 55000, "JPY": 750000 },
+        "Score": 45,
+        "Description": "Single deposit above the large-amount threshold"
+      },
+      {
+        "Id": "bin-ip-country-mismatch",
+        "Type": "CountryMismatch",
+        "Score": 25,
+        "Description": "Card issued in a different country than the IP"
+      },
+      {
+        "Id": "new-account-large-deposit",
+        "Type": "NewAccountAmount",
+        "MaxAccountAgeDays": 7,
+        "Limits": { "EUR": 500, "GBP": 430, "USD": 550 },
+        "Score": 30,
+        "Description": "Account younger than a week making a large deposit"
+      },
+      {
+        "Id": "first-deposit-large",
+        "Type": "FirstDeposit",
+        "Limits": { "EUR": 1000, "GBP": 860, "USD": 1100 },
+        "Score": 20,
+        "Description": "Large first deposit from a player with no approved deposits yet"
+      },
+      {
+        "Id": "chargeback-history",
+        "Type": "ChargebackHistory",
+        "MinChargebacks": 1,
+        "Score": 60,
+        "Action": "Review",
+        "Description": "Player has a chargeback on record"
+      }
+    ]
+  }
+}

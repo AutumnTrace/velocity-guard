@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/VelocityGuard.Api/VelocityGuard.Api.csproj" />
     <Project Path="src/VelocityGuard.Core/VelocityGuard.Core.csproj" />
   </Folder>
   <Folder Name="/tests/">
