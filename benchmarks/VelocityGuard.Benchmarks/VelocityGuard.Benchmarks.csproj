@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Run with: dotnet run -c Release (from this folder); pass a BenchmarkDotNet filter to pick benchmarks. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <Optimize>true</Optimize>
+    <!-- BenchmarkDotNet generates and builds its own project next to this one; its code is not ours to lint. -->
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\VelocityGuard.Api\VelocityGuard.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Benchmark the rule set that ships with the service, not a toy one. -->
+    <None Include="..\..\src\VelocityGuard.Api\rules.json" Link="rules.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
