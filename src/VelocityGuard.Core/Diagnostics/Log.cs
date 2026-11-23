@@ -24,11 +24,27 @@ internal static partial class Log
     [LoggerMessage(2001, LogLevel.Debug, "Assessed {AttemptId}: {Decision}, score {Score}, {Hits} hit(s), {ElapsedMs:0.000} ms")]
     public static partial void Assessed(ILogger logger, string attemptId, Decision decision, int score, int hits, double elapsedMs);
 
-    [LoggerMessage(2002, LogLevel.Warning, "Assessed {AttemptId} in degraded mode without {Unavailable}: rules said {RulesDecision}, policy {Policy} gave {Decision}")]
+    [LoggerMessage(2002, LogLevel.Information, "Assessed {AttemptId} in degraded mode without {Unavailable}: rules said {RulesDecision}, policy {Policy} gave {Decision}")]
     public static partial void AssessedDegraded(ILogger logger, string attemptId, string unavailable, Decision rulesDecision, DegradedPolicy policy, Decision decision);
 
     [LoggerMessage(2003, LogLevel.Warning, "{Dependency} unavailable ({Reason}) while assessing {AttemptId}")]
     public static partial void DependencyUnavailable(ILogger logger, string dependency, string reason, string attemptId);
+
+    /// <summary>While a circuit is open every request skips the dependency; the breaker itself logs the transition.</summary>
+    [LoggerMessage(2005, LogLevel.Debug, "{Dependency} skipped while its circuit is open, assessing {AttemptId}")]
+    public static partial void DependencyCircuitOpen(ILogger logger, string dependency, string attemptId);
+
+    public static void Unavailable(ILogger logger, DependencyUnavailableException exception, string attemptId)
+    {
+        if (exception.Reason == "circuit-open")
+        {
+            DependencyCircuitOpen(logger, exception.Dependency, attemptId);
+        }
+        else
+        {
+            DependencyUnavailable(logger, exception.Dependency, exception.Reason, attemptId);
+        }
+    }
 
     [LoggerMessage(2004, LogLevel.Warning, "Could not release the tentative amount of {AttemptId}: {Reason}")]
     public static partial void ReleaseFailed(ILogger logger, string attemptId, string reason);

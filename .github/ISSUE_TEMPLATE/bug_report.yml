@@ -1,0 +1,34 @@
+name: Bug report
+description: A decision, a rule or the API behaves incorrectly
+labels: [bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the request you sent (remove anything sensitive; never paste card numbers).
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: response
+    attributes:
+      label: Response
+      description: The JSON response, including `reasons`, `degraded` and `rulesVersion`.
+      render: json
+  - type: dropdown
+    id: storage
+    attributes:
+      label: Storage provider
+      options: [InMemory, Redis]
+  - type: input
+    id: version
+    attributes:
+      label: Version / commit
+      placeholder: v0.1.0

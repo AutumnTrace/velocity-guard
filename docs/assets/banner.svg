@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="title desc">
+  <title id="title">velocity-guard</title>
+  <desc id="desc">Real-time payment risk and velocity checks. A timeline of payment attempts with a sliding window over the latest ones, and a shield.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1020"/>
+      <stop offset="0.55" stop-color="#111a33"/>
+      <stop offset="1" stop-color="#1b1240"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.04"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#6366f1"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#ffffff" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="glow" cx="0.78" cy="0.45" r="0.45">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1280" height="320" fill="url(#bg)"/>
+  <rect width="1280" height="320" fill="url(#grid)"/>
+  <rect width="1280" height="320" fill="url(#glow)"/>
+
+  <!-- Title block -->
+  <g font-family="Segoe UI, Helvetica, Arial, sans-serif">
+    <text x="72" y="132" font-size="64" font-weight="700" fill="#f8fafc" letter-spacing="-1">velocity-guard</text>
+    <rect x="74" y="152" width="96" height="5" rx="2.5" fill="url(#accent)"/>
+    <text x="72" y="200" font-size="25" fill="#cbd5e1">Real-time payment risk and velocity checks</text>
+    <text x="72" y="236" font-size="18" fill="#94a3b8">Redis sliding windows · HybridCache · compiled rules · sub-ms decisions</text>
+    <g font-size="15" font-weight="600">
+      <rect x="72" y="258" width="86" height="30" rx="15" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12"/>
+      <text x="115" y="278" text-anchor="middle" fill="#e2e8f0">.NET 10</text>
+      <rect x="168" y="258" width="74" height="30" rx="15" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12"/>
+      <text x="205" y="278" text-anchor="middle" fill="#e2e8f0">Redis</text>
+      <rect x="252" y="258" width="64" height="30" rx="15" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12"/>
+      <text x="284" y="278" text-anchor="middle" fill="#e2e8f0">Lua</text>
+      <rect x="326" y="258" width="70" height="30" rx="15" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12"/>
+      <text x="361" y="278" text-anchor="middle" fill="#e2e8f0">gRPC</text>
+    </g>
+  </g>
+
+  <!-- Timeline of attempts with a sliding window over the latest ones -->
+  <g transform="translate(790 70)">
+    <line x1="0" y1="170" x2="430" y2="170" stroke="#64748b" stroke-opacity="0.6" stroke-width="2"/>
+    <g fill="#475569">
+      <rect x="10" y="128" width="14" height="42" rx="3"/>
+      <rect x="44" y="142" width="14" height="28" rx="3"/>
+      <rect x="78" y="118" width="14" height="52" rx="3"/>
+      <rect x="112" y="150" width="14" height="20" rx="3"/>
+      <rect x="146" y="134" width="14" height="36" rx="3"/>
+    </g>
+    <rect x="186" y="40" width="226" height="138" rx="12" fill="url(#window)" stroke="#22d3ee" stroke-opacity="0.75" stroke-width="2" stroke-dasharray="7 6"/>
+    <g fill="url(#accent)">
+      <rect x="200" y="124" width="14" height="46" rx="3"/>
+      <rect x="234" y="104" width="14" height="66" rx="3"/>
+      <rect x="268" y="112" width="14" height="58" rx="3"/>
+      <rect x="302" y="88" width="14" height="82" rx="3"/>
+    </g>
+    <rect x="336" y="66" width="14" height="104" rx="3" fill="#f472b6"/>
+    <circle cx="343" cy="54" r="5" fill="#f472b6"/>
+    <path d="M196 30 L404 30" stroke="#22d3ee" stroke-opacity="0.75" stroke-width="2"/>
+    <path d="M196 24 L196 36 M404 24 L404 36" stroke="#22d3ee" stroke-opacity="0.75" stroke-width="2"/>
+    <text x="300" y="20" text-anchor="middle" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="15" fill="#67e8f9">(now - 1m, now]</text>
+
+    <!-- Shield -->
+    <g transform="translate(372 104)">
+      <path d="M38 0 L72 12 L72 40 C72 62 57 78 38 86 C19 78 4 62 4 40 L4 12 Z" fill="url(#shield)" stroke="#c4b5fd" stroke-width="2"/>
+      <path d="M22 44 L34 56 L56 30" fill="none" stroke="#f8fafc" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>

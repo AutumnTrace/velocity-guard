@@ -47,7 +47,7 @@ public sealed class AssessmentService(
             {
                 available &= ~SignalAvailability.Profile;
                 (unavailable ??= []).Add(ex.Dependency);
-                Log.DependencyUnavailable(logger, ex.Dependency, ex.Reason, attempt.AttemptId);
+                Log.Unavailable(logger, ex, attempt.AttemptId);
             }
         }
 
@@ -62,7 +62,7 @@ public sealed class AssessmentService(
             {
                 available &= ~SignalAvailability.Lists;
                 AddOnce(ref unavailable, ex.Dependency);
-                Log.DependencyUnavailable(logger, ex.Dependency, ex.Reason, attempt.AttemptId);
+                Log.Unavailable(logger, ex, attempt.AttemptId);
             }
         }
 
@@ -83,7 +83,7 @@ public sealed class AssessmentService(
             {
                 available &= ~SignalAvailability.Velocity;
                 AddOnce(ref unavailable, ex.Dependency);
-                Log.DependencyUnavailable(logger, ex.Dependency, ex.Reason, attempt.AttemptId);
+                Log.Unavailable(logger, ex, attempt.AttemptId);
                 windows = new long[ruleSet.Velocity.SlotCount];
             }
         }

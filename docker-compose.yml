@@ -1,4 +1,4 @@
-# The full stack: VelocityGuard on Redis, plus the Aspire dashboard for traces, metrics and logs.
+# The full stack: VelocityGuard on Redis, plus the Aspire dashboard for traces and metrics (OTLP).
 #
 #   docker compose up --build
 #

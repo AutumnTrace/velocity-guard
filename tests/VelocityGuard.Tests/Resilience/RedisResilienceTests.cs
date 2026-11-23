@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
@@ -87,7 +88,53 @@ public sealed class RedisResilienceTests : IDisposable
             store.RecordAsync(new VelocityRequest(Card(), Compile(VelocityCount("v", Core.Payments.Dimension.Device, TimeSpan.FromMinutes(1), 3)).Velocity, DateTimeOffset.UnixEpoch), cts.Token).AsTask());
     }
 
+    [Fact]
+    public async Task While_the_circuit_is_open_the_L2_cache_reads_as_empty_and_skips_writes()
+    {
+        var inner = new FailingDistributedCache();
+        var cache = new ResilientDistributedCache(inner, _pipeline);
+
+        for (var i = 0; i < 4; i++)
+        {
+            await Assert.ThrowsAnyAsync<Exception>(() => cache.GetAsync("k", Ct));
+        }
+
+        var callsBefore = inner.Calls;
+        Assert.Null(await cache.GetAsync("k", Ct));
+        await cache.SetAsync("k", [1, 2, 3], new DistributedCacheEntryOptions(), Ct);
+        Assert.Equal(callsBefore, inner.Calls);
+    }
+
+    private static CancellationToken Ct => TestContext.Current.CancellationToken;
+
     public void Dispose() => _services.Dispose();
+
+    private sealed class FailingDistributedCache : IDistributedCache
+    {
+        public int Calls { get; private set; }
+
+        public byte[]? Get(string key) => Fail<byte[]?>();
+
+        public Task<byte[]?> GetAsync(string key, CancellationToken token = default) => Task.FromResult(Fail<byte[]?>());
+
+        public void Set(string key, byte[] value, DistributedCacheEntryOptions options) => Fail<bool>();
+
+        public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default) => Task.FromResult(Fail<bool>());
+
+        public void Refresh(string key) => Fail<bool>();
+
+        public Task RefreshAsync(string key, CancellationToken token = default) => Task.FromResult(Fail<bool>());
+
+        public void Remove(string key) => Fail<bool>();
+
+        public Task RemoveAsync(string key, CancellationToken token = default) => Task.FromResult(Fail<bool>());
+
+        private T Fail<T>()
+        {
+            Calls++;
+            throw new RedisConnectionException(ConnectionFailureType.UnableToConnect, CommandFlags.None, "down", null, CommandStatus.Unknown);
+        }
+    }
 
     private static Task Record(IVelocityStore store) =>
         store.RecordAsync(new VelocityRequest(Card(), Compile(VelocityCount("v", Core.Payments.Dimension.Device, TimeSpan.FromMinutes(1), 3)).Velocity, DateTimeOffset.UnixEpoch), CancellationToken.None).AsTask();
