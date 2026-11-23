@@ -2,7 +2,8 @@
 #
 #   docker compose up --build
 #
-# API:        http://localhost:8080   (try GET /v1/rules)
+# REST API:   http://localhost:8080   (try GET /v1/rules)
+# gRPC:       http://localhost:8081   (HTTP/2, velocityguard.v1.RiskService)
 # Dashboard:  http://localhost:18888
 
 services:
@@ -27,6 +28,7 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+      - "8081:8081"
     environment:
       Storage__Provider: Redis
       ConnectionStrings__Redis: redis:6379

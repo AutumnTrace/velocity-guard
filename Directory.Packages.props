@@ -17,6 +17,10 @@
     <PackageVersion Include="Microsoft.Extensions.Resilience" Version="10.11.1" />
   </ItemGroup>
 
+  <ItemGroup Label="gRPC">
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.85.0" />
+  </ItemGroup>
+
   <ItemGroup Label="Redis and resilience">
     <PackageVersion Include="Polly.Extensions" Version="8.9.1" />
     <PackageVersion Include="StackExchange.Redis" Version="3.4.35" />
