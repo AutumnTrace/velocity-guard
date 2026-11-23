@@ -5,6 +5,15 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # The service targets .NET 10 (LTS). Packages that ship with the runtime move to a new major
+    # together with the target framework, in a deliberate upgrade, not one Dependabot PR at a time.
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Serilog.AspNetCore"
+        update-types: ["version-update:semver-major"]
     groups:
       microsoft:
         patterns: ["Microsoft.*", "System.*"]
@@ -29,3 +38,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    ignore:
+      # Same reason: the SDK and runtime images follow the target framework.
+      - dependency-name: "dotnet/sdk"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "dotnet/aspnet"
+        update-types: ["version-update:semver-major"]
