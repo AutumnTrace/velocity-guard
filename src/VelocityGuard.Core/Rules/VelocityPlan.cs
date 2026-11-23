@@ -53,6 +53,9 @@ public sealed class VelocityPlan
 
     public bool IsEmpty => Windows.IsEmpty;
 
+    /// <summary>True when any subject keeps amounts (a sum window exists).</summary>
+    public bool HasSums => Subjects.Any(s => s.HasSums);
+
     public sealed class Builder
     {
         private readonly List<WindowSpec> _windows = [];

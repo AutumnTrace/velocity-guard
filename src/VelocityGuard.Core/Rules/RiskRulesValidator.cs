@@ -36,6 +36,12 @@ public sealed partial class RiskRulesValidator : IValidateOptions<RiskRulesOptio
             failures.Add($"Rules: at most {MaxRules} rules are supported (got {options.Rules.Count}).");
         }
 
+        // An empty rule set approves everything; that is almost always a broken edit, not a decision.
+        if (!options.Rules.Any(r => r.Enabled))
+        {
+            failures.Add("Rules: at least one enabled rule is required.");
+        }
+
         var ids = new HashSet<string>(StringComparer.Ordinal);
         var listChecks = new HashSet<(string, Dimension)>();
         for (var i = 0; i < options.Rules.Count; i++)
