@@ -63,6 +63,22 @@ jobs:
           name: test-results
           path: TestResults/**
 
+  benchmarks:
+    name: Benchmarks (dry run)
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      # Keeps the suite compiling and runnable. Real numbers come from full runs on a quiet machine.
+      - name: Run every benchmark once
+        working-directory: benchmarks/VelocityGuard.Benchmarks
+        run: dotnet run -c Release -- --filter "*" --job dry
+
   docker:
     name: Docker image
     runs-on: ubuntu-latest
