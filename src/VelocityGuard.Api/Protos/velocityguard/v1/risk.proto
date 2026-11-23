@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package velocityguard.v1;
+
+option csharp_namespace = "VelocityGuard.Api.Grpc.V1";
+
+// Risk assessments for internal callers such as a payment gateway. Same engine, rules and
+// velocity windows as POST /v1/assessments; HTTP/2 and protobuf instead of JSON.
+service RiskService {
+  // Records the attempt in every velocity window and returns approve, review or decline.
+  rpc Assess(AssessRequest) returns (AssessResponse);
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CARD = 1;
+  PAYMENT_METHOD_WALLET = 2;
+  PAYMENT_METHOD_BANK_TRANSFER = 3;
+}
+
+enum Decision {
+  DECISION_UNSPECIFIED = 0;
+  DECISION_APPROVE = 1;
+  DECISION_REVIEW = 2;
+  DECISION_DECLINE = 3;
+}
+
+message AssessRequest {
+  // Caller's id for the attempt; makes retries idempotent. Generated when empty.
+  string attempt_id = 1;
+  string player_id = 2;
+  // Amount in minor units of the currency (cents, pence; yen have none). Money is never a float.
+  int64 amount_minor = 3;
+  // ISO 4217 code, e.g. "EUR".
+  string currency = 4;
+  PaymentMethod method = 5;
+  string ip = 6;
+  // ISO 3166-1 alpha-2 country the IP geolocates to.
+  string ip_country = 7;
+  // Card payments: issuing country of the BIN.
+  string card_bin_country = 8;
+  // Card payments: PSP token or card fingerprint. Never a card number; those are rejected.
+  string card_fingerprint = 9;
+  // Wallet payments: the wallet network.
+  string wallet_network = 10;
+  string device_id = 11;
+  // Required: days since the player registered.
+  optional int32 account_age_days = 12;
+}
+
+message Reason {
+  string rule = 1;
+  string type = 2;
+  int32 score = 3;
+  string message = 4;
+}
+
+message Degraded {
+  string policy = 1;
+  repeated string unavailable = 2;
+  repeated string skipped_rules = 3;
+  Decision rules_decision = 4;
+}
+
+message AssessResponse {
+  string attempt_id = 1;
+  Decision decision = 2;
+  int32 score = 3;
+  repeated Reason reasons = 4;
+  repeated string evaluated_rules = 5;
+  // Set only when the decision was made without every signal.
+  Degraded degraded = 6;
+  string rules_version = 7;
+  double latency_ms = 8;
+}

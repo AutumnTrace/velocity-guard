@@ -18,7 +18,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble-chiseled AS runtime
 WORKDIR /app
 COPY --from=build /app .
 
-ENV ASPNETCORE_HTTP_PORTS=8080
-EXPOSE 8080
+# REST (HTTP/1.1) on 8080, gRPC (HTTP/2 cleartext) on 8081; see Kestrel:Endpoints in appsettings.json.
+EXPOSE 8080 8081
 USER $APP_UID
 ENTRYPOINT ["dotnet", "VelocityGuard.Api.dll"]

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Serilog;
 using VelocityGuard.Api.Contracts;
 using VelocityGuard.Api.Endpoints;
+using VelocityGuard.Api.Grpc;
 using VelocityGuard.Api.Hosting;
 using VelocityGuard.Core.Assessment;
 
@@ -32,6 +33,7 @@ builder.Services.AddProblemDetails();
 builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
 
 builder.Services.AddOpenApi();
+builder.Services.AddGrpc(options => options.EnableDetailedErrors = builder.Environment.IsDevelopment());
 
 var app = builder.Build();
 
@@ -48,6 +50,7 @@ app.UseSerilogRequestLogging(options => options.GetLevel = (http, _, ex) =>
 app.MapOpenApi();
 app.MapAssessmentEndpoints();
 app.MapRulesAndListEndpoints();
+app.MapGrpcService<RiskGrpcService>();
 app.MapVelocityGuardHealthChecks();
 
 app.Run();

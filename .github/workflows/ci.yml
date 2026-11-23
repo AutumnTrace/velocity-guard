@@ -37,7 +37,7 @@ jobs:
         run: >-
           dotnet test --no-build -c Release
           --filter "Category!=Integration"
-          --logger "trx;LogFileName=unit.trx"
+          --logger "trx;LogFilePrefix=unit"
           --collect "XPlat Code Coverage"
           --results-directory TestResults/unit
 
@@ -45,7 +45,7 @@ jobs:
         run: >-
           dotnet test --no-build -c Release
           --filter "Category=Integration"
-          --logger "trx;LogFileName=integration.trx"
+          --logger "trx;LogFilePrefix=integration"
           --collect "XPlat Code Coverage"
           --results-directory TestResults/integration
 
@@ -85,7 +85,7 @@ jobs:
 
       - name: Smoke test the container
         run: |
-          docker run -d --name vg -p 8080:8080 velocity-guard:ci
+          docker run -d --name vg -p 8080:8080 -p 8081:8081 velocity-guard:ci
           for i in $(seq 1 30); do curl -sf http://localhost:8080/health/ready && break; sleep 1; done
           curl -sf -X POST http://localhost:8080/v1/assessments \
             -H "Content-Type: application/json" \
@@ -93,6 +93,14 @@ jobs:
             | tee response.json
           grep -q '"decision":"approve"' response.json
           docker inspect --format '{{.Config.User}}' velocity-guard:ci | grep -qv '^0\?$'
+
+      - name: Smoke test gRPC (grpcurl, HTTP/2 cleartext on 8081)
+        run: |
+          docker run --rm --network host -v "$PWD/src/VelocityGuard.Api/Protos:/protos:ro" fullstorydev/grpcurl:v1.9.3 \
+            -plaintext -import-path /protos -proto velocityguard/v1/risk.proto \
+            -d '{"playerId":"p-ci-grpc","amountMinor":"2500","currency":"EUR","method":"PAYMENT_METHOD_CARD","ip":"203.0.113.10","ipCountry":"DE","cardBinCountry":"DE","cardFingerprint":"fp_ci_grpc_01","deviceId":"dev-ci-grpc","accountAgeDays":400}' \
+            localhost:8081 velocityguard.v1.RiskService/Assess | tee grpc.json
+          grep -q '"decision": "DECISION_APPROVE"' grpc.json
 
       - name: Container logs
         if: always()
