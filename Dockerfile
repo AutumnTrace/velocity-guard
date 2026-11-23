@@ -6,6 +6,7 @@ WORKDIR /src
 # Restore first so the dependency layer is cached between code changes.
 COPY global.json Directory.Build.props Directory.Packages.props VelocityGuard.slnx ./
 COPY src/VelocityGuard.Core/VelocityGuard.Core.csproj src/VelocityGuard.Core/
+COPY src/VelocityGuard.Redis/VelocityGuard.Redis.csproj src/VelocityGuard.Redis/
 COPY src/VelocityGuard.Api/VelocityGuard.Api.csproj src/VelocityGuard.Api/
 RUN dotnet restore src/VelocityGuard.Api/VelocityGuard.Api.csproj
 

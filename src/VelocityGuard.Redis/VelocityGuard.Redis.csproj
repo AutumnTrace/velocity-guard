@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Redis storage for VelocityGuard: Lua sliding windows, attempt journal, lists and profiles, with Polly resilience.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VelocityGuard.Core\VelocityGuard.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="Microsoft.Extensions.Resilience" />
+    <PackageReference Include="Polly.Extensions" />
+    <PackageReference Include="StackExchange.Redis" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Scripts\*.lua" LogicalName="VelocityGuard.Redis.Scripts.%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="VelocityGuard.Tests" />
+    <InternalsVisibleTo Include="VelocityGuard.IntegrationTests" />
+  </ItemGroup>
+
+</Project>

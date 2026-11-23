@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VelocityGuard.Core\VelocityGuard.Core.csproj" />
+    <ProjectReference Include="..\VelocityGuard.Redis\VelocityGuard.Redis.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +24,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="VelocityGuard.Tests" />
+    <InternalsVisibleTo Include="VelocityGuard.IntegrationTests" />
   </ItemGroup>
 
 </Project>
