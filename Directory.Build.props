@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Mina Rotari</Authors>
     <Product>VelocityGuard</Product>
     <Copyright>© 2026 Mina Rotari</Copyright>
