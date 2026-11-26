@@ -582,7 +582,7 @@ Rules live in [`src/VelocityGuard.Api/rules.json`](src/VelocityGuard.Api/rules.j
 ## ✅ Testing
 
 ```bash
-dotnet test --filter "Category!=Integration"   # 176 unit, property-based, HTTP and gRPC tests; no Docker
+dotnet test --filter "Category!=Integration"   # 182 unit, property-based, HTTP and gRPC tests; no Docker
 dotnet test --filter "Category=Integration"    # 24 Testcontainers tests against Redis 8.10; needs Docker
 ```
 
@@ -596,7 +596,7 @@ CI runs both on every push and pull request, publishes a coverage summary, build
 | `Signals/*` | HybridCache read-through, immutable L1 instances, single-key eviction, tag invalidation of a whole list, the list hit mask |
 | `Assessment/*` | The pipeline end to end on in-memory storage, each **degraded policy** with its metrics, declines releasing amounts, outcomes and chargeback blocking, **hot reload** through real `IConfiguration` and `IOptionsMonitor` (applied, rejected, unchanged, invalid at startup) |
 | `Resilience/*` | The production Redis pipeline around fake stores: timeout, circuit opening, fail-fast while open, caller cancellation, L2 reads while open |
-| `Api/*` | `WebApplicationFactory`: approve, review, decline, card testing, problem details, malformed JSON, outcomes, admin lists and key checks, health, OpenAPI, a real **on-disk `rules.json` edit**, refusal to start on invalid rules, the service pointed at a **closed Redis port**, and gRPC |
+| `Api/*` | `WebApplicationFactory`: approve, review, decline, card testing, problem details, malformed JSON, outcomes, admin lists and key checks, health, OpenAPI, a real **on-disk `rules.json` edit**, refusal to start on invalid rules or on list names and seed entries that rules and the admin API would not accept, the service pointed at a **closed Redis port**, and gRPC |
 | `IntegrationTests/*` | Redis via Testcontainers: the same store contract, **400 concurrent attempts from four connections** counted exactly once, TTLs and hash slots, HybridCache **L2 sharing and tag invalidation across instances**, two API instances sharing windows and chargeback blocks, and a `docker pause` **outage** that must degrade fast and recover |
 
 ### Observability
@@ -657,8 +657,8 @@ dotnet run -c Release -- --filter "*"
 | `Degraded:Policy` | `Review` | `FailOpen`, `Review` or `FailClosed`; read live, no restart needed |
 | `Cache:Expiration` / `Cache:LocalExpiration` | 5 min / 30 s | HybridCache L2 and L1 lifetimes; L1 bounds cross-instance staleness |
 | `Outcomes:BlockOnChargeback` | `true` | Add the card and device to deny lists on a chargeback |
-| `Outcomes:ChargebackBlocklists` | `Card: blocked-cards`, `Device: blocked-devices` | Which list each identifier goes to |
-| `RiskData:SeedLists` | one demo device, one demo VIP | List entries added at startup (idempotent) |
+| `Outcomes:ChargebackBlocklists` | `Card: blocked-cards`, `Device: blocked-devices` | Which list each identifier goes to; names follow the rule-file pattern (lower-case letters, digits, `-`) |
+| `RiskData:SeedLists` | one demo device, one demo VIP | List entries added at startup (idempotent); validated like admin API entries, so no card numbers |
 | `Security:AdminApiKey` | empty (admin API off) | Key for the list endpoints, sent as `X-Admin-Key` |
 | `Kestrel:Endpoints` | REST `:8080`, gRPC `:8081` (HTTP/2) | Development uses 5380 and 5381 |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | unset | Turns on OTLP export of traces and metrics |

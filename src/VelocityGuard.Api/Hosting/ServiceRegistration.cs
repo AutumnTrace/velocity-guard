@@ -54,8 +54,18 @@ public static class ServiceRegistration
             .Validate(o => o.LocalExpiration > TimeSpan.Zero && o.LocalExpiration <= o.Expiration, "Cache: need 0 < LocalExpiration <= Expiration.")
             .ValidateOnStart();
 
-        services.AddOptions<OutcomeOptions>().Bind(configuration.GetSection(OutcomeOptions.SectionName));
-        services.AddOptions<RiskDataOptions>().Bind(configuration.GetSection(RiskDataOptions.SectionName));
+        // List names here must follow the same rule as rules and the admin API. Otherwise a chargeback
+        // block or a seed would land in a list no rule reads and the admin API cannot clear.
+        services.AddOptions<OutcomeOptions>()
+            .Bind(configuration.GetSection(OutcomeOptions.SectionName))
+            .Validate(o => o.ChargebackBlocklists.Values.All(ListNames.IsValidName), $"Outcomes:ChargebackBlocklists: list names must be {ListNames.NameRule}.")
+            .ValidateOnStart();
+
+        services.AddOptions<RiskDataOptions>()
+            .Bind(configuration.GetSection(RiskDataOptions.SectionName))
+            .Validate(o => o.SeedLists.Keys.All(ListNames.IsValidName), $"RiskData:SeedLists: list names must be {ListNames.NameRule}.")
+            .Validate(o => o.SeedLists.Values.All(entries => entries.All(ListNames.IsValidEntry)), $"RiskData:SeedLists: entries must be {ListNames.EntryRule}.")
+            .ValidateOnStart();
         services.AddOptions<SecurityOptions>().Bind(configuration.GetSection(SecurityOptions.SectionName));
 
         services.AddOptions<StorageOptions>()

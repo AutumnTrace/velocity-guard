@@ -5,6 +5,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+### Fixed
+
+- `Outcomes:ChargebackBlocklists` and `RiskData:SeedLists` are validated at startup with the list-name and entry rules that `rules.json` and the admin API already enforce. A name like `Blocked-Cards` used to send chargeback blocks to a list no rule could reference and the admin API could not clear, and seed entries skipped the card-number check
+
 ## [0.1.0] - 2026-11-23
 
 First release.

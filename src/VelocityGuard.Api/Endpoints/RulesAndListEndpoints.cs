@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using VelocityGuard.Api.Contracts;
 using VelocityGuard.Api.Hosting;
@@ -8,12 +7,9 @@ using VelocityGuard.Core.Signals;
 
 namespace VelocityGuard.Api.Endpoints;
 
-public static partial class RulesAndListEndpoints
+public static class RulesAndListEndpoints
 {
     private const int MaxListEntries = 10_000;
-
-    [GeneratedRegex("^[a-z0-9][a-z0-9-]{0,63}$")]
-    private static partial Regex ListName();
 
     public static IEndpointRouteBuilder MapRulesAndListEndpoints(this IEndpointRouteBuilder app)
     {
@@ -96,7 +92,7 @@ public static partial class RulesAndListEndpoints
         }
 
         var entries = request.Entries ?? [];
-        if (entries.Count > MaxListEntries || entries.Any(e => !IsValidEntry(e)))
+        if (entries.Count > MaxListEntries || entries.Any(e => !ListNames.IsValidEntry(e)))
         {
             return TypedResults.ValidationProblem(
                 new Dictionary<string, string[]> { ["entries"] = [$"at most {MaxListEntries} ids of 1-128 letters, digits, '-', '_', '.', ':' or '/' (no card numbers)"] });
@@ -113,22 +109,16 @@ public static partial class RulesAndListEndpoints
     private static ValidationProblem? Validate(string list, string? value)
     {
         var errors = new Dictionary<string, string[]>();
-        if (!ListName().IsMatch(list))
+        if (!ListNames.IsValidName(list))
         {
-            errors["list"] = ["must be 1-64 lower-case letters, digits or '-'"];
+            errors["list"] = [$"must be {ListNames.NameRule}"];
         }
 
-        if (value is not null && !IsValidEntry(value))
+        if (value is not null && !ListNames.IsValidEntry(value))
         {
-            errors["value"] = ["must be 1-128 letters, digits, '-', '_', '.', ':' or '/' and must not be a card number"];
+            errors["value"] = [$"must be {ListNames.EntryRule}"];
         }
 
         return errors.Count == 0 ? null : TypedResults.ValidationProblem(errors, title: "Invalid list request.");
     }
-
-    /// <summary>List entries are ids (players, devices, card tokens, IPs or IPv6 /64 keys); never raw card numbers.</summary>
-    private static bool IsValidEntry(string value) =>
-        value.Length is > 0 and <= 128
-        && !PaymentAttemptParser.LooksLikeCardNumber(value)
-        && PaymentAttemptParser.IsValidId(value.Replace('/', '-'), 128);
 }
