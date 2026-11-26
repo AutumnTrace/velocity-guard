@@ -5,6 +5,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-26
+
 ### Fixed
 
 - `Outcomes:ChargebackBlocklists` and `RiskData:SeedLists` are validated at startup with the list-name and entry rules that `rules.json` and the admin API already enforce. A name like `Blocked-Cards` used to send chargeback blocks to a list no rule could reference and the admin API could not clear, and seed entries skipped the card-number check
@@ -28,5 +30,6 @@ First release.
 - **Observability**: Serilog (compact JSON), OpenTelemetry traces and metrics (decisions, rule hits, latency histograms, cache lookups and misses, degraded decisions, rule reloads, outcomes) with OTLP and Azure Monitor exporters switched on by configuration (#1)
 - **Delivery**: multi-stage Dockerfile on a chiseled non-root image, `docker compose` stack with Redis and the Aspire dashboard, CI with unit and Testcontainers integration tests, coverage summary, container and compose smoke tests (REST and gRPC), CodeQL, GHCR publishing on tags (#1, #2, #3, #5)
 
-[Unreleased]: https://github.com/AutumnTrace/velocity-guard/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/AutumnTrace/velocity-guard/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/AutumnTrace/velocity-guard/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/AutumnTrace/velocity-guard/releases/tag/v0.1.0
